@@ -24,12 +24,21 @@ function transpose(grid) {
   );
 }
 
+function normalize(grid) {
+  const cols = Math.max(...grid.map(r => r.length));
+  return grid.map(row => {
+    const padded = [...row];
+    while (padded.length < cols) padded.push("");
+    return padded;
+  });
+}
+
 const TRANSFORMS = {
-  rotateCW:  g => transpose(g).map(row => [...row].reverse()),
-  rotateCCW: g => transpose(g.map(row => [...row].reverse())),
-  flipH:     g => g.map(row => [...row].reverse()),
-  flipV:     g => [...g].reverse(),
-  transpose: g => transpose(g),
+  rotateCW:  g => transpose(normalize(g)).map(row => [...row].reverse()),
+  rotateCCW: g => transpose(normalize(g).map(row => [...row].reverse())),
+  flipH:     g => normalize(g).map(row => [...row].reverse()),
+  flipV:     g => [...normalize(g)].reverse(),
+  transpose: g => transpose(normalize(g)),
 };
 
 const OPS = [
