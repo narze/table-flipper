@@ -158,12 +158,13 @@ function Spreadsheet({ grid, flash, maxRows = 50, maxCols = 20 }) {
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [input, setInput]     = useState("");
-  const [grid, setGrid]       = useState(null);   // null = no data yet
-  const [opLabel, setOpLabel] = useState(null);   // last applied op name
-  const [toast, setToast]     = useState(null);   // { msg, type }
-  const [flash, setFlash]     = useState(false);
-  const [flashOp, setFlashOp] = useState(null);
+  const [input, setInput]       = useState("");
+  const [grid, setGrid]         = useState(null);   // null = no data yet
+  const [opLabel, setOpLabel]   = useState(null);   // last applied op name
+  const [toast, setToast]       = useState(null);   // { msg, type }
+  const [flash, setFlash]       = useState(false);
+  const [flashOp, setFlashOp]   = useState(null);
+  const [autoCopy, setAutoCopy] = useState(true);
   const taRef = useRef();
   const toastTimer = useRef();
 
@@ -210,10 +211,14 @@ export default function App() {
     setFlash(true);
     setTimeout(() => setFlash(false), 500);
 
-    // Auto-copy
-    copyGrid(newGrid);
-    showToast(`${op.label} applied — copied to clipboard ✓`);
-  }, [grid, inputGrid]);
+    // Auto-copy (if enabled)
+    if (autoCopy) {
+      copyGrid(newGrid);
+      showToast(`${op.label} applied — copied to clipboard ✓`);
+    } else {
+      showToast(`${op.label} applied`);
+    }
+  }, [grid, inputGrid, autoCopy]);
 
   const manualCopy = useCallback(() => {
     if (!grid) return;
@@ -309,7 +314,7 @@ export default function App() {
           Table<span style={{color:"#6366f1"}}>Flipper</span>
         </div>
         <div style={{ fontSize:12, color:"#888" }}>
-          (╯°□°）╯︵ ┻━┻&nbsp;&nbsp;rotate · flip · transpose&nbsp;&nbsp;┬─┬ ノ( ゜-゜ノ)
+          (╯°□°)╯︵ ┻━┻
         </div>
       </div>
 
@@ -350,9 +355,18 @@ export default function App() {
                 </span>
                 <span className="dim-badge">{dims}</span>
                 <div style={{ marginLeft:"auto", display:"flex", gap:8, alignItems:"center" }}>
-                  {opLabel && (
+                  <label style={{ display:"flex", alignItems:"center", gap:4, fontSize:11, color:"#5f6368", fontFamily:"Arial,sans-serif", cursor:"pointer", userSelect:"none" }}>
+                    <input
+                      type="checkbox"
+                      checked={autoCopy}
+                      onChange={e => setAutoCopy(e.target.checked)}
+                      style={{ cursor:"pointer" }}
+                    />
+                    Auto-copy
+                  </label>
+                  {opLabel && autoCopy && (
                     <span style={{ fontSize:11, color:"#5f6368", fontFamily:"Arial,sans-serif" }}>
-                      ✓ Auto-copied
+                      ✓ Copied
                     </span>
                   )}
                   <button className="copy-again-btn" onClick={manualCopy}>
