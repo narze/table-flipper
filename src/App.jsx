@@ -317,7 +317,13 @@ export default function App() {
 
         {/* Paste area */}
         <div>
-          <div className="section-head">01 — Paste your table</div>
+          <div className="section-head" style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <span>01 — Paste your table</span>
+            <button
+              onClick={() => { setInput("A1\tA2\tA3\tA4\nB1\tB2\tB3\tB4\nC1\tC2\tC3\tC4💥"); setGrid(null); setOpLabel(null); }}
+              style={{ background:"none", border:"none", color:"#1a73e8", fontSize:11, cursor:"pointer", fontFamily:"inherit", padding:0, textDecoration:"underline" }}
+            >Example</button>
+          </div>
           <textarea
             className="paste-area"
             ref={taRef}
